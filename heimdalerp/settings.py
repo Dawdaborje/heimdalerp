@@ -4,8 +4,8 @@
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
+from .wsgi import application
 import os
-from datetime import timedelta
 from django.utils.translation import gettext_lazy as _
 from pathlib import Path
 
@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'ACHTUNG_choose-a-secret-key-and-keep-it-secret_ACHTUNG'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 SECURE_BROWSER_XSS_FILTER = False
 SECURE_CONTENT_TYPE_NOSNIFF = False
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
@@ -36,7 +36,8 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-AUTH_USER_MODEL = 'auth.User'
+AUTH_USER_MODEL = 'Authentication.User'
+
 LOGIN_REDIRECT_URL = '/accounts/profile/'
 LOGIN_URL = '/accounts/login/'
 PASSWORD_RESET_TIMEOUT_DAYS = 1
@@ -80,7 +81,7 @@ CACHES = {
         # 'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         # 'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         # 'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-        }
+    }
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -115,12 +116,14 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'heimdalerp',
-        'USER': 'heimdalerp',
-        'PASSWORD': 'password',
-        'HOST': '127.0.0.1', # Uncomment to use TCP/IP
-        'PORT': '5432', # Uncomment to use TCP/IP
+        'ENGINE': os.environ.get("DATABASE_ENGINE", "django.db.backends.postgresql"),
+        'NAME': os.environ.get("DATABASE_NAME", "heimdalerp"),
+        'USER': os.environ.get("DATABASE_USER", "heimdalerp"),
+        'PASSWORD': os.environ.get("DATABASE_PASSWORD", "heimdalerp"),
+        # Uncomment to use TCP/IP
+        'HOST': os.environ.get("DATABASE_HOST", "localhost"),
+        # Uncomment to use TCP/IP
+        'PORT': os.environ.get("DATABASE_PORT", "5432"),
         'ATOMIC_REQUESTS': False,
         'AUTOCOMMIT': True,
         'CONN_MAX_AGE': 0,
@@ -143,9 +146,7 @@ DATABASE_ROUTERS = []
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication', # Disable in production.
-        'rest_framework.authentication.SessionAuthentication', # Disable in production.
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'knox.auth.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
@@ -158,36 +159,6 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
-JWT_AUTH = {
-    'JWT_ENCODE_HANDLER':
-    'rest_framework_jwt.utils.jwt_encode_handler',
-
-    'JWT_DECODE_HANDLER':
-    'rest_framework_jwt.utils.jwt_decode_handler',
-
-    'JWT_PAYLOAD_HANDLER':
-    'rest_framework_jwt.utils.jwt_payload_handler',
-
-    'JWT_PAYLOAD_GET_USER_ID_HANDLER':
-    'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
-
-    'JWT_RESPONSE_PAYLOAD_HANDLER':
-    'rest_framework_jwt.utils.jwt_response_payload_handler',
-
-    'JWT_SECRET_KEY': SECRET_KEY,
-    'JWT_ALGORITHM': 'HS256',
-    'JWT_VERIFY': True,
-    'JWT_VERIFY_EXPIRATION': True,
-    'JWT_LEEWAY': 0,
-    'JWT_EXPIRATION_DELTA': timedelta(hours=12),
-    'JWT_AUDIENCE': None,
-    'JWT_ISSUER': None,
-
-    'JWT_ALLOW_REFRESH': False,
-    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
-
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',
-}
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DEFAULT_CHARSET = 'utf-8'
@@ -238,12 +209,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third party apps
     'rest_framework',
-    'rest_framework_jwt',
+    'knox',
     'corsheaders',
     'reversion',
+    'jazzmin',
 
     # HeimdalERP Core Apps
+    'Authentication',
     'geo',
     'persons',
     'hr',
@@ -257,15 +231,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    # 'django.middleware.security.SecurityMiddleware',
-    # 'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
-    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # 'django.contrib.messages.middleware.MessageMiddleware',
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'django.middleware.gzip.GZipMiddleware',
-    
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -296,7 +261,6 @@ TEMPLATES = [
     },
 ]
 
-from .wsgi import application
 
 WSGI_APPLICATION = application
 
