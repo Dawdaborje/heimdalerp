@@ -29,6 +29,7 @@ class Contact(PersonProfile):
         return self.name
 
     class Meta:
+        app_label = 'contact'
         verbose_name = _('contact')
         verbose_name_plural = _('contacts')
         default_permissions = ('view', 'add', 'change', 'delete')

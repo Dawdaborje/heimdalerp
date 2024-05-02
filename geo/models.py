@@ -15,13 +15,15 @@ class AlternativeName(models.Model):
         max_length=150
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
+        app_label = 'geo'
         verbose_name = _('alternative name')
         verbose_name_plural = _('alternative names')
         default_permissions = ('view', 'add', 'change', 'delete')
+        default_permissions = ('view', 'add', 'change', 'delete')
+
+    def __str__(self):
+        return self.name
 
 
 class Country(models.Model):
@@ -49,6 +51,7 @@ class Country(models.Model):
         return self.default_name
 
     class Meta:
+        app_label = 'geo'
         verbose_name = _('country')
         verbose_name_plural = _('countries')
         default_permissions = ('view', 'add', 'change', 'delete')
@@ -87,6 +90,7 @@ class Region(models.Model):
         return self.default_name
 
     class Meta:
+        app_label = 'geo'
         verbose_name = _('region')
         verbose_name_plural = _('regions')
         default_permissions = ('view', 'add', 'change', 'delete')
@@ -119,6 +123,7 @@ class Locality(models.Model):
         return self.default_name
 
     class Meta:
+        app_label = 'geo'
         verbose_name = _('locality')
         verbose_name_plural = _('localities')
         default_permissions = ('view', 'add', 'change', 'delete')

@@ -54,6 +54,7 @@ class PhysicalAddress(models.Model):
         return self.street_address
 
     class Meta:
+        app_label = 'persons'
         verbose_name = _('physical address')
         verbose_name_plural = _('physical addresses')
         default_permissions = ('view', 'add', 'change', 'delete')
@@ -78,6 +79,7 @@ class Company(models.Model):
         return self.fantasy_name
 
     class Meta:
+        app_label = 'persons'
         verbose_name = _('company')
         verbose_name_plural = _('companies')
         default_permissions = ('view', 'add', 'change', 'delete')
@@ -135,4 +137,5 @@ class PersonProfile(models.Model):
     )
 
     class Meta:
+        app_label = 'persons'
         abstract = True
