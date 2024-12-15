@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "heimdalerp-backend"
+version = "0.1.0"
+description = ""
+authors = ["Dawda Borje Kujabi <dawdaborjekujabi@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.1.2"
+djangorestframework = "^3.15.2"
+psycopg2 = "^2.9.10"
+django-rest-knox = "5.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
