@@ -1,8 +1,0 @@
-wheel
-setuptools
-flake8
-isort
-tox
-coverage
-markdown
-django-crispy-forms

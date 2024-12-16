@@ -1,8 +1,0 @@
-django
-psycopg2
-djangorestframework
-djangorestframework-jwt
-django-rest-framework-proxy
-django-filter
-django-cors-headers
-django-reversion
